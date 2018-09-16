@@ -1,25 +1,12 @@
 d3.select('h1').style('color', 'blue')
-  .text('Hello world');
+  .text('Super simple bar chart');
 
-// add a dataset
-const dataset = ['Banana', 'Apple', 'Orange'];
-// select container
-d3.select('body')
-  // select item 
-  .selectAll('p')
-  // choose dataset
-  .data(dataset)
-  .enter()
-  // append data to the item
-  .append('p')
-  // method
-  .text(function(item) { return item; });
 
 // add a simple bar chat
 // add a dummy dataset
-const charDataset = ['10', '20', '30'];
+const charDataset = [1,2,11,4,8,6];
 
-const svgWidth = 500, svgHeight = 100, barPadding = 5;
+const svgWidth = 500, svgHeight = 200, barPadding = 5;
 const barWidth = (svgWidth / 7);
 
 // select svg container and define width & height
@@ -27,24 +14,46 @@ const svg = d3.select('svg')
               .attr('height', svgHeight)
               .attr('width', svgWidth);
 
+// create chart scale
+const yScale = d3.scaleLinear()
+    .domain([0, d3.max(charDataset)])
+    .range([0, svgHeight - 20]);
+
 // create bar chart
 const barChart = svg.selectAll('rect')
     .data(charDataset)
     .enter()
     .append('rect')
-    // apply methods to each of the rect
+    // config y location of each rect
     .attr('y', function(d) {
-      return svgHeight - d;
+      return svgHeight - yScale(d);
+    })
+    // config x location of each rect
+    .attr('x', function(d, i) {
+      return barWidth * i;
     })
     .attr('height', function(d) {
-      return d;
+      return yScale(d);
     })
     .attr('width', barWidth - barPadding)
     // 
-    .attr('transform', function(d, i) {
-      const translate = [barWidth * i , 0];
-      return "translate(" + translate + ")"
+    
+// apply background color for chart
+d3.selectAll('rect').attr('fill', '#76e078');
+
+// appending text to chart
+const text  = svg.selectAll('text')
+    .data(charDataset)
+    .enter()
+    .append('text')
+    .text(function(d) { return d; })
+    .attr('y', function(d) {
+      return svgHeight- yScale(d) - 5;
+    })
+    .attr('x', function(d, i) {
+      return barWidth * i;
     })
 
-// apply background color for chart
-d3.selectAll('rect').style('background', 'green');
+    
+
+
