@@ -1,59 +1,56 @@
-d3.select('h1').style('color', 'blue')
-  .text('Super simple bar chart');
+const dataset = [
+  [ 34,     78 ],
+  [ 109,   280 ],
+  [ 310,   120 ],
+  [ 79,   411 ],
+  [ 420,   220 ],
+  [ 233,   145 ],
+  [ 333,   96 ],
+  [ 222,    333 ],
+  [ 78,    320 ],
+  [ 21,   123 ]
+];
 
+// define width and height of the svg canvas
+const w = 500;
+const h = 500;
+const padding = 60;
 
-// add a simple bar chat
-// add a dummy dataset
-const charDataset = [1,2,11,4,8,6];
+// define scales so that scatters are gonna fit within the canvas
+const xScale = d3.scaleLinear()
+     .domain([0, d3.max(dataset, (d) => d[0])])
+     .range([padding, w - padding]);
 
-const svgWidth = 500, svgHeight = 200, barPadding = 5;
-const barWidth = (svgWidth / 7);
-
-// select svg container and define width & height
-const svg = d3.select('svg')
-              .attr('height', svgHeight)
-              .attr('width', svgWidth);
-
-// create chart scale
 const yScale = d3.scaleLinear()
-    .domain([0, d3.max(charDataset)])
-    .range([0, svgHeight - 20]);
+     .domain([0, d3.max(dataset, (d) => d[1])])
+     .range([h - padding, padding]);
 
-// create bar chart
-const barChart = svg.selectAll('rect')
-    .data(charDataset)
-    .enter()
-    .append('rect')
-    // config y location of each rect
-    .attr('y', function(d) {
-      return svgHeight - yScale(d);
-    })
-    // config x location of each rect
-    .attr('x', function(d, i) {
-      return barWidth * i;
-    })
-    .attr('height', function(d) {
-      return yScale(d);
-    })
-    .attr('width', barWidth - barPadding)
-    // 
-    
-// apply background color for chart
-d3.selectAll('rect').attr('fill', '#76e078');
+// append svg to body
+const svg = d3.select("body")
+  .append("svg")
+  .attr("width", w)
+  .attr("height", h);
 
-// appending text to chart
-const text  = svg.selectAll('text')
-    .data(charDataset)
-    .enter()
-    .append('text')
-    .text(function(d) { return d; })
-    .attr('y', function(d) {
-      return svgHeight- yScale(d) - 5;
-    })
-    .attr('x', function(d, i) {
-      return barWidth * i;
-    })
+// add circles to svg
+svg.selectAll("circle")
+.data(dataset)
+.enter()
+.append("circle")
+.attr("cx", d => xScale(d[0]))
+.attr("cy", d => yScale(d[1]))
+.attr("r", 5)
+.append("title")
+.text(d => `My value is "${d[0]}, ${d[1]}" `);
 
-    
+// add text 
+svg.selectAll("text")
+.data(dataset)
+.enter()
+.append("text")
+.text((d) =>  (d[0] + ", "
++ d[1]))
+// Add your code below this line
+.attr("x", d => xScale(d[0]) + 10)
+.attr("y", d => yScale(d[1]))
 
-
+// Add your code above this line
